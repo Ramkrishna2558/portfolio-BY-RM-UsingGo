@@ -1,9 +1,10 @@
 services:
   - type: web
-    name: futuristic-portfolio
-    env: docker
+    name: portfolio-ramkrishna
+    runtime: go
     plan: free
-    dockerContext: .
+    buildCommand: go build -o server .
+    startCommand: ./server
     healthCheckPath: /api/health
     envVars:
       - key: PORT

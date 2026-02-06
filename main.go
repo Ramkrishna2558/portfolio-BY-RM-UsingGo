@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"os"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
@@ -23,14 +24,20 @@ func main() {
 	// Static file serving
 	app.Static("/", "./public")
 
-	// API Routes (Example)
+	// API Routes
 	app.Get("/api/health", func(c *fiber.Ctx) error {
 		return c.JSON(fiber.Map{
-			"status": "active",
-			"system": "all systems nominal",
+			"status": "healthy",
+			"app":    "portfolio",
 		})
 	})
 
-	// Start server on port 3000
-	log.Fatal(app.Listen(":3000"))
+	// Get PORT from environment variable (for Render)
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "3000"
+	}
+
+	// Start server
+	log.Fatal(app.Listen(":" + port))
 }
