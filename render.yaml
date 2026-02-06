@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: futuristic-portfolio
+    env: docker
+    plan: free
+    dockerContext: .
+    healthCheckPath: /api/health
+    envVars:
+      - key: PORT
+        value: 3000
