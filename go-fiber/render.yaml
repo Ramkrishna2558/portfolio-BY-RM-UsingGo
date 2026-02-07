@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: portfolio-ramkrishna
+    runtime: go
+    plan: free
+    buildCommand: go build -o server .
+    startCommand: ./server
+    healthCheckPath: /api/health
+    envVars:
+      - key: PORT
+        value: 3000

@@ -1,126 +1,178 @@
-# Portfolio - Ramkrishna More
+# 🚀 Ramkrishna More - Portfolio Website
 
-A modern, responsive portfolio website built with **Go Fiber** backend and a **Material 3 inspired** frontend design.
+A modern, enterprise-grade portfolio website featuring **Liquid Glass UI design** with dual tech stack support for **Go Fiber** and **Astro**.
 
-![Go](https://img.shields.io/badge/Go-1.21+-00ADD8?style=flat&logo=go)
-![Fiber](https://img.shields.io/badge/Fiber-v2.52-00ACD7?style=flat)
-![License](https://img.shields.io/badge/License-MIT-green.svg)
+![Portfolio Preview](https://img.shields.io/badge/Status-Live-brightgreen) ![Astro](https://img.shields.io/badge/Astro-5.17.1-purple) ![Go](https://img.shields.io/badge/Go-Fiber-00ADD8) ![TypeScript](https://img.shields.io/badge/TypeScript-Strict-blue)
+
+---
 
 ## ✨ Features
 
-- **Dual Theme System** - Dark (navy blue) and Light (creamy warm) themes with localStorage persistence
-- **GSAP Animations** - Smooth scroll reveals, staggered animations, parallax effects
-- **Interactive Elements** - Scroll progress bar, cursor glow, typing animation
-- **Responsive Design** - Mobile-first approach with fluid typography
-- **Projects Showcase** - Project cards with hover overlays
-- **Fast Backend** - Go Fiber serving static files with minimal latency
+- 🎨 **Liquid Glass UI** - Apple-inspired glassmorphism design with smooth transitions
+- 🌓 **Theme Toggle** - Light cream / Dark mode with smooth animations
+- 🎠 **Projects Carousel** - Auto-sliding with pause on hover & touch support
+- ⚡ **GSAP Animations** - Scroll-triggered and on-load effects
+- 📱 **Fully Responsive** - Mobile-first design approach
+- 🔒 **TypeScript** - Enterprise-grade type safety
+- 🏗️ **Dual Stack** - Supports both Go Fiber AND Astro
+
+---
 
 ## 🚀 Quick Start
 
-### Prerequisites
+### Using Switch Script (Recommended)
 
-- [Go 1.21+](https://golang.org/dl/)
-- Git
+**Windows:**
+```batch
+# Run Astro SSG (Recommended)
+switch.bat astro
 
-### Installation
-
-```bash
-# Clone the repository
-git clone https://github.com/Ramkrishna2558/portfolio-go-fiber.git
-cd portfolio-go-fiber
-
-# Install dependencies
-go mod tidy
-
-# Run the server
-go run main.go
+# Run Go Fiber backend
+switch.bat go
 ```
 
-Open [http://localhost:3000](http://localhost:3000) in your browser.
+**Linux/Mac:**
+```bash
+chmod +x switch.sh
+./switch.sh astro  # or ./switch.sh go
+```
+
+### Manual Start
+
+**Astro:**
+```bash
+cd astro
+npm install
+npm run dev       # Development → http://localhost:4321
+npm run build     # Production build
+npm run preview   # Preview production
+```
+
+**Go Fiber:**
+```bash
+cd go-fiber
+go run main.go    # → http://localhost:3000
+```
+
+---
 
 ## 📁 Project Structure
 
 ```
 portfolio-go-fiber/
-├── main.go           # Go Fiber server
-├── go.mod            # Go module definition
-├── go.sum            # Dependency checksums
-├── Dockerfile        # Docker configuration
-├── render.yaml       # Render deployment config
-├── public/
-│   ├── index.html    # Main HTML file
-│   ├── style.css     # All styles (themes, animations)
-│   └── script.js     # GSAP animations & interactions
+│
+├── 📂 astro/                    # Astro SSG Project
+│   ├── src/
+│   │   ├── components/          # Reusable UI components
+│   │   │   └── Projects.astro   # Auto-sliding carousel
+│   │   ├── data/                # TypeScript data files
+│   │   │   ├── projects.ts
+│   │   │   ├── experience.ts
+│   │   │   ├── certifications.ts
+│   │   │   ├── skills.ts
+│   │   │   └── site.ts
+│   │   ├── types/               # TypeScript interfaces
+│   │   │   └── index.ts
+│   │   ├── layouts/
+│   │   ├── pages/
+│   │   └── styles/
+│   ├── public/
+│   ├── package.json
+│   ├── tsconfig.json
+│   └── vercel.json              # Vercel deployment config
+│
+├── 📂 go-fiber/                 # Go Fiber Project
+│   ├── main.go
+│   ├── go.mod
+│   ├── Dockerfile
+│   ├── render.yaml
+│   └── public/                  # Static assets
+│
+├── switch.bat                   # Windows stack switcher
+├── switch.sh                    # Unix stack switcher
 └── README.md
 ```
 
-## 🎨 Tech Stack
+---
 
-| Layer | Technology |
-|-------|-----------|
-| Backend | Go Fiber v2 |
-| Frontend | Vanilla HTML/CSS/JS |
-| Animations | GSAP + ScrollTrigger |
-| Fonts | Inter, Outfit (Google Fonts) |
-| Icons | Font Awesome 6 |
-| CSS Tokens | Open Props |
+## 🎨 Design System
 
-## 🌐 Deployment
+### Liquid Glass UI
+- `backdrop-filter: blur(20px)` for glass effect
+- Dynamic gradient backgrounds with animated orbs
+- Specular highlights and depth shadows
+- Smooth 0.4s theme transitions
 
-### Deploy to Render
+### Color Themes
 
-1. Push code to GitHub
-2. Connect repository to [Render](https://render.com)
-3. Render will auto-detect the `render.yaml` configuration
+| Theme | Background | Accent |
+|-------|-----------|--------|
+| Light (Cream) | `#EAD6BF` | `#3D3B3C` |
+| Dark | `#0a0a1a` | `#818cf8` |
+
+---
+
+## 📦 Deployment
+
+### Vercel (Astro - Recommended)
+
+1. Push repository to GitHub
+2. Import project in [Vercel](https://vercel.com)
+3. Configure:
+   - **Root Directory:** `astro`
+   - **Framework:** Auto-detected (Astro)
+4. Deploy!
+
+### Render (Go Fiber)
+
+1. Connect GitHub repository
+2. Set **Root Directory:** `go-fiber`
+3. Render will use `render.yaml` configuration
 
 ### Docker
 
 ```bash
-# Build image
+cd go-fiber
 docker build -t portfolio .
-
-# Run container
 docker run -p 3000:3000 portfolio
 ```
 
-## 🎯 Customization
+---
 
-### Change Theme Colors
+## 🛠️ Tech Stack
 
-Edit `public/style.css`:
+| Category | Technologies |
+|----------|-------------|
+| **Frontend** | Astro, TypeScript, GSAP, CSS3 |
+| **Backend** | Go Fiber |
+| **Styling** | Custom CSS, Glassmorphism |
+| **Animation** | GSAP, ScrollTrigger |
+| **Deployment** | Vercel, Render, Docker |
 
-```css
-/* Dark Theme */
-[data-theme="dark"] {
-  --surface-1: #0c1222;
-  --accent: #5b9cf6;
-  /* ... */
-}
+---
 
-/* Light Theme */
-[data-theme="light"] {
-  --surface-1: #faf8f5;
-  --accent: #2563eb;
-  /* ... */
-}
-```
+## 📄 Sections
 
-### Update Content
+- **Hero** - Animated intro with portrait and typing effect
+- **About** - Professional summary
+- **Skills** - Categorized tech stack chips
+- **Projects** - Auto-sliding carousel with hover pause
+- **Experience** - Timeline-style work history
+- **Certifications** - Professional credentials grid
+- **Contact** - Email and social links
 
-Edit `public/index.html` to modify:
-- Personal information
-- Skills list
-- Project cards
-- Experience details
-- Certifications
-
-## 📄 License
-
-MIT License - feel free to use this template for your own portfolio!
+---
 
 ## 👤 Author
 
-**Ramkrishna More**
-- Email: Ramkrishnamore299@gmail.com
-- LinkedIn: [linkedin.com/in/ramkrishnamore](https://linkedin.com/in/)
-- GitHub: [github.com/Ramkrishna2558](https://github.com/Ramkrishna2558)
+**Ramkrishna More**  
+Full Stack Developer | .NET 8 | Angular 19 | Azure AI
+
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-blue?logo=linkedin)](https://linkedin.com/in/ramkrishnamore)
+[![GitHub](https://img.shields.io/badge/GitHub-Follow-black?logo=github)](https://github.com/Ramkrishna2558)
+
+---
+
+## 📝 License
+
+© 2026 Ramkrishna More. All rights reserved.

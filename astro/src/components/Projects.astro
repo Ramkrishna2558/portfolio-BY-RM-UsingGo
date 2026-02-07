@@ -1,0 +1,319 @@
+---
+/**
+ * Projects Carousel Component
+ * Enterprise-grade auto-sliding carousel with infinite loop
+ */
+import type { Project } from '../types';
+import { projects } from '../data/projects';
+
+interface Props {
+  autoSlideInterval?: number;
+}
+
+const { autoSlideInterval = 4000 } = Astro.props;
+---
+
+<section id="projects">
+  <div class="container">
+    <div class="section-header reveal">
+      <h2 class="section-title">Projects</h2>
+      <p class="section-subtitle">Recent work and side projects</p>
+    </div>
+    
+    <div class="carousel-container" data-auto-slide={autoSlideInterval}>
+      <div class="carousel-track" id="carouselTrack">
+        {projects.map((project, index) => (
+          <article class="carousel-slide" data-index={index}>
+            <div class="project-card-carousel glass">
+              <div class="project-image">
+                <div class="project-placeholder">
+                  <i class={project.icon}></i>
+                </div>
+                <div class="project-overlay">
+                  <div class="project-links">
+                    {project.github && (
+                      <a href={project.github} target="_blank" rel="noopener noreferrer" class="project-link" aria-label="View on GitHub">
+                        <i class="fab fa-github"></i>
+                      </a>
+                    )}
+                    {project.demo && (
+                      <a href={project.demo} target="_blank" rel="noopener noreferrer" class="project-link" aria-label="Live Demo">
+                        <i class="fas fa-external-link-alt"></i>
+                      </a>
+                    )}
+                  </div>
+                </div>
+              </div>
+              <div class="project-content">
+                <h3>{project.title}</h3>
+                <p>{project.description}</p>
+                <div class="project-tags">
+                  {project.tags.map(tag => (
+                    <span class="tag">{tag}</span>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </article>
+        ))}
+      </div>
+      
+      <!-- Navigation Dots -->
+      <div class="carousel-dots" id="carouselDots">
+        {projects.map((_, index) => (
+          <button 
+            class={`carousel-dot ${index === 0 ? 'active' : ''}`}
+            data-index={index}
+            aria-label={`Go to slide ${index + 1}`}
+          ></button>
+        ))}
+      </div>
+      
+      <!-- Navigation Arrows -->
+      <button class="carousel-arrow carousel-prev" id="carouselPrev" aria-label="Previous slide">
+        <i class="fas fa-chevron-left"></i>
+      </button>
+      <button class="carousel-arrow carousel-next" id="carouselNext" aria-label="Next slide">
+        <i class="fas fa-chevron-right"></i>
+      </button>
+    </div>
+  </div>
+</section>
+
+<style>
+  .carousel-container {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    padding: var(--space-lg) 0;
+  }
+
+  .carousel-track {
+    display: flex;
+    gap: var(--space-lg);
+    transition: transform 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
+    will-change: transform;
+  }
+
+  .carousel-slide {
+    flex: 0 0 calc(33.333% - var(--space-lg));
+    min-width: 320px;
+  }
+
+  .project-card-carousel {
+    height: 100%;
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+    transition: all var(--duration-normal) var(--ease-spring);
+  }
+
+  .project-card-carousel:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: var(--shadow-glass-hover);
+  }
+
+  /* Navigation Dots */
+  .carousel-dots {
+    display: flex;
+    justify-content: center;
+    gap: var(--space-sm);
+    margin-top: var(--space-xl);
+  }
+
+  .carousel-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: none;
+    background: var(--glass-border);
+    cursor: pointer;
+    transition: all var(--duration-fast) var(--ease-out);
+  }
+
+  .carousel-dot:hover,
+  .carousel-dot.active {
+    background: var(--accent);
+    transform: scale(1.2);
+    box-shadow: 0 0 12px var(--accent-glow);
+  }
+
+  /* Navigation Arrows */
+  .carousel-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    border: 1px solid var(--glass-border);
+    background: var(--glass-bg);
+    backdrop-filter: blur(12px);
+    color: var(--text-1);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all var(--duration-fast) var(--ease-spring);
+    z-index: 10;
+  }
+
+  .carousel-arrow:hover {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: white;
+    transform: translateY(-50%) scale(1.1);
+    box-shadow: var(--shadow-button);
+  }
+
+  .carousel-prev {
+    left: var(--space-md);
+  }
+
+  .carousel-next {
+    right: var(--space-md);
+  }
+
+  /* Responsive */
+  @media (max-width: 1024px) {
+    .carousel-slide {
+      flex: 0 0 calc(50% - var(--space-md));
+    }
+  }
+
+  @media (max-width: 640px) {
+    .carousel-slide {
+      flex: 0 0 calc(100% - var(--space-md));
+    }
+    
+    .carousel-arrow {
+      display: none;
+    }
+  }
+</style>
+
+<script is:inline>
+(function() {
+  const container = document.querySelector('.carousel-container');
+  const track = document.getElementById('carouselTrack');
+  const dots = document.querySelectorAll('.carousel-dot');
+  const prevBtn = document.getElementById('carouselPrev');
+  const nextBtn = document.getElementById('carouselNext');
+  
+  if (!track || !container) return;
+  
+  const slides = track.querySelectorAll('.carousel-slide');
+  const slideCount = slides.length;
+  let currentIndex = 0;
+  let autoSlideInterval = parseInt(container.dataset.autoSlide) || 4000;
+  let autoSlideTimer = null;
+  let isHovering = false;
+  
+  function getVisibleSlides() {
+    const width = window.innerWidth;
+    if (width <= 640) return 1;
+    if (width <= 1024) return 2;
+    return 3;
+  }
+  
+  function getSlideWidth() {
+    const slide = slides[0];
+    const style = getComputedStyle(slide);
+    const gap = parseFloat(getComputedStyle(track).gap) || 24;
+    return slide.offsetWidth + gap;
+  }
+  
+  function goToSlide(index) {
+    const maxIndex = Math.max(0, slideCount - getVisibleSlides());
+    currentIndex = Math.max(0, Math.min(index, maxIndex));
+    
+    const offset = currentIndex * getSlideWidth();
+    track.style.transform = `translateX(-${offset}px)`;
+    
+    // Update dots
+    dots.forEach((dot, i) => {
+      dot.classList.toggle('active', i === currentIndex);
+    });
+  }
+  
+  function nextSlide() {
+    const maxIndex = Math.max(0, slideCount - getVisibleSlides());
+    goToSlide(currentIndex >= maxIndex ? 0 : currentIndex + 1);
+  }
+  
+  function prevSlide() {
+    const maxIndex = Math.max(0, slideCount - getVisibleSlides());
+    goToSlide(currentIndex <= 0 ? maxIndex : currentIndex - 1);
+  }
+  
+  function startAutoSlide() {
+    if (autoSlideTimer) clearInterval(autoSlideTimer);
+    if (!isHovering) {
+      autoSlideTimer = setInterval(nextSlide, autoSlideInterval);
+    }
+  }
+  
+  function stopAutoSlide() {
+    if (autoSlideTimer) {
+      clearInterval(autoSlideTimer);
+      autoSlideTimer = null;
+    }
+  }
+  
+  // Event listeners
+  prevBtn?.addEventListener('click', () => {
+    prevSlide();
+    startAutoSlide();
+  });
+  
+  nextBtn?.addEventListener('click', () => {
+    nextSlide();
+    startAutoSlide();
+  });
+  
+  dots.forEach((dot, index) => {
+    dot.addEventListener('click', () => {
+      goToSlide(index);
+      startAutoSlide();
+    });
+  });
+  
+  // Pause on hover
+  container.addEventListener('mouseenter', () => {
+    isHovering = true;
+    stopAutoSlide();
+  });
+  
+  container.addEventListener('mouseleave', () => {
+    isHovering = false;
+    startAutoSlide();
+  });
+  
+  // Touch support
+  let touchStartX = 0;
+  let touchEndX = 0;
+  
+  container.addEventListener('touchstart', (e) => {
+    touchStartX = e.changedTouches[0].screenX;
+    stopAutoSlide();
+  }, { passive: true });
+  
+  container.addEventListener('touchend', (e) => {
+    touchEndX = e.changedTouches[0].screenX;
+    const diff = touchStartX - touchEndX;
+    
+    if (Math.abs(diff) > 50) {
+      if (diff > 0) nextSlide();
+      else prevSlide();
+    }
+    startAutoSlide();
+  }, { passive: true });
+  
+  // Handle resize
+  window.addEventListener('resize', () => {
+    goToSlide(currentIndex);
+  });
+  
+  // Initialize
+  startAutoSlide();
+})();
+</script>

@@ -1,0 +1,319 @@
+---
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const { 
+  title = "Ramkrishna More | Full Stack Developer",
+  description = "Full Stack Developer specializing in .NET 8, Angular 19, and Azure AI. Building scalable web applications with modern technologies."
+} = Astro.props;
+---
+
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{title}</title>
+  <meta name="description" content={description}>
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <!-- Global Styles -->
+  <link rel="stylesheet" href="/styles/global.css">
+  
+  <!-- Theme Toggle Script (loads first) -->
+  <script src="/theme.js" defer></script>
+</head>
+<body>
+  <!-- Scroll Progress Indicator -->
+  <div class="scroll-progress" id="scrollProgress"></div>
+  
+  <!-- Cursor Glow Effect -->
+  <div class="cursor-glow" id="cursorGlow"></div>
+  
+  <slot />
+  
+  <!-- GSAP + ScrollTrigger -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollToPlugin.min.js"></script>
+  
+  <!-- Client-side Scripts -->
+  <script is:inline>
+    document.addEventListener('DOMContentLoaded', () => {
+      console.log('Scripts loaded, initializing...');
+      
+      // Register GSAP plugins if available
+      if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
+        gsap.registerPlugin(ScrollTrigger);
+      }
+      
+      // Add js-loaded class
+      document.body.classList.add('js-loaded');
+
+      // ============================================
+      // SCROLL PROGRESS INDICATOR
+      // ============================================
+      const scrollProgress = document.getElementById('scrollProgress');
+
+      window.addEventListener('scroll', () => {
+        const scrollTop = window.scrollY;
+        const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+        const scrollPercent = (scrollTop / docHeight) * 100;
+        if (scrollProgress) scrollProgress.style.width = scrollPercent + '%';
+      });
+
+      // ============================================
+      // CURSOR GLOW EFFECT
+      // ============================================
+      const cursorGlow = document.getElementById('cursorGlow');
+
+      if (cursorGlow && window.innerWidth > 768) {
+        document.addEventListener('mousemove', (e) => {
+          gsap.to(cursorGlow, {
+            x: e.clientX,
+            y: e.clientY,
+            duration: 0.5,
+            ease: 'power2.out'
+          });
+        });
+      }
+
+      // ============================================
+      // TYPING ANIMATION
+      // ============================================
+      const typingElement = document.getElementById('typingText');
+      const phrases = [
+        'Full Stack Developer',
+        '.NET 8 & Angular 19 Expert',
+        'Azure AI Certified',
+        'Building Scalable Solutions'
+      ];
+      let phraseIndex = 0;
+      let charIndex = 0;
+      let isDeleting = false;
+      let typingSpeed = 80;
+
+      function typeText() {
+        if (!typingElement) return;
+        const currentPhrase = phrases[phraseIndex];
+
+        if (isDeleting) {
+          typingElement.textContent = currentPhrase.substring(0, charIndex - 1);
+          charIndex--;
+          typingSpeed = 40;
+        } else {
+          typingElement.textContent = currentPhrase.substring(0, charIndex + 1);
+          charIndex++;
+          typingSpeed = 80;
+        }
+
+        if (!isDeleting && charIndex === currentPhrase.length) {
+          isDeleting = true;
+          typingSpeed = 2000;
+        } else if (isDeleting && charIndex === 0) {
+          isDeleting = false;
+          phraseIndex = (phraseIndex + 1) % phrases.length;
+          typingSpeed = 500;
+        }
+
+        setTimeout(typeText, typingSpeed);
+      }
+
+      setTimeout(typeText, 1000);
+
+      // ============================================
+      // THEME TOGGLE
+      // ============================================
+      const themeToggle = document.getElementById('themeToggle');
+      const sunIcon = themeToggle?.querySelector('.sun-icon');
+      const moonIcon = themeToggle?.querySelector('.moon-icon');
+
+      const savedTheme = localStorage.getItem('theme') || 'light';
+      document.documentElement.setAttribute('data-theme', savedTheme);
+      updateThemeIcon(savedTheme);
+
+      themeToggle?.addEventListener('click', () => {
+        const currentTheme = document.documentElement.getAttribute('data-theme');
+        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        
+        console.log('Theme toggle clicked! Switching from', currentTheme, 'to', newTheme);
+
+        document.documentElement.setAttribute('data-theme', newTheme);
+        localStorage.setItem('theme', newTheme);
+        updateThemeIcon(newTheme);
+
+        // Animation with error handling
+        try {
+          if (typeof gsap !== 'undefined') {
+            gsap.fromTo(themeToggle,
+              { rotation: 0, scale: 0.8 },
+              { rotation: 360, scale: 1, duration: 0.4, ease: 'back.out(1.7)' }
+            );
+          }
+        } catch (e) {
+          console.log('Theme toggle animation skipped');
+        }
+      });
+
+      function updateThemeIcon(theme) {
+        if (!sunIcon || !moonIcon) return;
+        if (theme === 'dark') {
+          sunIcon.style.display = 'block';
+          moonIcon.style.display = 'none';
+        } else {
+          sunIcon.style.display = 'none';
+          moonIcon.style.display = 'block';
+        }
+      }
+
+      // ============================================
+      // NAVIGATION SCROLL EFFECT
+      // ============================================
+      const nav = document.getElementById('nav');
+
+      window.addEventListener('scroll', () => {
+        if (window.scrollY > 80) {
+          nav?.classList.add('scrolled');
+        } else {
+          nav?.classList.remove('scrolled');
+        }
+      });
+
+      // ============================================
+      // HERO ANIMATIONS
+      // ============================================
+      const heroTimeline = gsap.timeline({ delay: 0.3 });
+
+      heroTimeline
+        .to('.hero-badge', { opacity: 1, y: 0, duration: 0.6, ease: 'power3.out' })
+        .to('.hero-title', { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out' }, '-=0.3')
+        .to('.hero-subtitle', { opacity: 1, y: 0, duration: 0.6, ease: 'power3.out' }, '-=0.4')
+        .to('.hero-actions', { opacity: 1, y: 0, duration: 0.6, ease: 'power3.out' }, '-=0.3')
+        .fromTo('.hero-image', 
+          { opacity: 0, x: 50, scale: 0.95 },
+          { opacity: 1, x: 0, scale: 1, duration: 0.8, ease: 'power3.out' }, '-=0.5');
+
+      // ============================================
+      // HERO IMAGE SCROLL FADE - Fades as text section ends
+      // ============================================
+      const heroImage = document.getElementById('heroImage');
+      if (heroImage) {
+        gsap.to(heroImage, {
+          opacity: 0,
+          y: -50,
+          scale: 0.9,
+          ease: 'power2.out',
+          scrollTrigger: {
+            trigger: '.hero',
+            start: 'top top',
+            end: 'bottom 60%',
+            scrub: 1
+          }
+        });
+      }
+
+      // ============================================
+      // SCROLL REVEAL ANIMATIONS
+      // ============================================
+      gsap.utils.toArray('.reveal').forEach((element) => {
+        gsap.fromTo(element as HTMLElement,
+          { opacity: 0, y: 40 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.8,
+            ease: 'power3.out',
+            scrollTrigger: {
+              trigger: element as HTMLElement,
+              start: 'top 85%',
+              toggleActions: 'play none none none'
+            }
+          }
+        );
+      });
+
+      // ============================================
+      // STAGGERED ANIMATIONS
+      // ============================================
+      const skillCategories = document.querySelectorAll('.skills-category');
+      skillCategories.forEach((category) => {
+        const chips = category.querySelectorAll('.skill-chip');
+        gsap.fromTo(chips,
+          { opacity: 0, y: 20, scale: 0.9 },
+          {
+            opacity: 1, y: 0, scale: 1, duration: 0.5, stagger: 0.08, ease: 'back.out(1.4)',
+            scrollTrigger: { trigger: category, start: 'top 80%', toggleActions: 'play none none none' }
+          }
+        );
+      });
+
+      const projectCards = document.querySelectorAll('.project-card');
+      gsap.fromTo(projectCards,
+        { opacity: 0, y: 50, scale: 0.95 },
+        {
+          opacity: 1, y: 0, scale: 1, duration: 0.6, stagger: 0.15, ease: 'power3.out',
+          scrollTrigger: { trigger: '.projects-grid', start: 'top 80%', toggleActions: 'play none none none' }
+        }
+      );
+
+      const certItems = document.querySelectorAll('.cert-item');
+      gsap.fromTo(certItems,
+        { opacity: 0, x: -30 },
+        {
+          opacity: 1, x: 0, duration: 0.6, stagger: 0.1, ease: 'power3.out',
+          scrollTrigger: { trigger: '.cert-grid', start: 'top 80%', toggleActions: 'play none none none' }
+        }
+      );
+
+      // ============================================
+      // SMOOTH SCROLL
+      // ============================================
+      document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+        anchor.addEventListener('click', function(e) {
+          e.preventDefault();
+          const href = (this as HTMLAnchorElement).getAttribute('href');
+          if (!href) return;
+          const target = document.querySelector(href);
+
+          if (target) {
+            const offset = 80;
+            const targetPosition = target.getBoundingClientRect().top + window.scrollY - offset;
+            window.scrollTo({ top: targetPosition, behavior: 'smooth' });
+          }
+        });
+      });
+
+      // ============================================
+      // MOBILE MENU
+      // ============================================
+      const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+      const navLinks = document.querySelector('.nav-links');
+
+      mobileMenuBtn?.addEventListener('click', () => {
+        navLinks?.classList.toggle('active');
+      });
+
+      // ============================================
+      // PARALLAX ON HERO
+      // ============================================
+      gsap.to('.hero-content', {
+        yPercent: 30,
+        ease: 'none',
+        scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true }
+      });
+    });
+  </script>
+</body>
+</html>
